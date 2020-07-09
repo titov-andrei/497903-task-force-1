@@ -1,7 +1,7 @@
 # Личный проект «TaskForce»
 
 * Студент: [Андрей Титов](https://up.htmlacademy.ru/yii/1/user/497903).
-* Наставник: `Неизвестно`.
+* Наставник: [Никита Медведев](https://htmlacademy.ru/profile/id1281715).
 
 ---
 
