@@ -2,27 +2,21 @@
 
 class Task
 {
-    // статусы
-    const STATUS_NEW = 'Новое';
-    const STATUS_CANCELED = 'Отменено';
-    const STATUS_INWORK = 'В работе';
-    const STATUS_DONE = 'Выполнено';
-    const STATUS_FAILED = 'Провалено';
+    const STATUS_NEW = 'new';
+    const STATUS_IN_PROGRESS= 'in_progress';
+    const STATUS_DONE = 'done';
+    const STATUS_CANCELED = 'canceled';
+    const STATUS_FAILED = 'failed';
 
-    // действия
-    const ACTION_CANCEL = 'Отменить';
-    const ACTION_RESPOND = 'Откликнуться';
-    const ACTION_EXECUTE = 'Выполнить';
-    const ACTION_REFUSE = 'Отказаться';
+    const ACTION_CANCEL = 'cancel';
+    const ACTION_REFUSE = 'refuse';
+    const ACTION_RESPOND = 'respond';
+    const ACTION_EXECUTE = 'execute';
 
-    // роли
-    const EXECUTOR = 'Исполнитель';
-    const CUSTOMER = 'Заказчик';
+    private $status;
+    private $executorId;
+    private $customerId;
 
-    public $status;
-    public $nextAction;
-
-    // создание новой схемы
     public function __construct(int $executor, ?int $customer = null)
     {
         $this->status = self::STATUS_NEW;
@@ -30,54 +24,46 @@ class Task
         $this->customerId = $customer;
     }
 
-    // следующий статус
-    public function getNextStatus($action)
+    public function getStatusMap()
+    {
+        return [
+            self::STATUS_NEW => 'Новое',
+            self::STATUS_DONE => 'Выполнено',
+            self::STATUS_CANCELED => 'Отменено',
+            self::STATUS_IN_PROGRESS => 'В работе',
+            self::STATUS_FAILED => 'Провалено',
+        ];
+    }
+
+    public function getActionMap()
+    {
+        return [
+            self::ACTION_CANCEL => 'Отменить',
+            self::ACTION_REFUSE => 'Отказаться',
+            self::ACTION_RESPOND => 'Откликнуться',
+            self::ACTION_EXECUTE => 'Выполнить',
+        ];
+    }
+
+    public function getNextStatusByAction($action)
     {
         $statusArray = [
             self::ACTION_CANCEL => self::STATUS_CANCELED,
-            self::ACTION_RESPOND => self::STATUS_INWORK,
+            self::ACTION_RESPOND => self::STATUS_IN_PROGRESS,
             self::ACTION_EXECUTE => self::STATUS_DONE,
             self::ACTION_REFUSE => self::STATUS_FAILED
         ];
 
-        return $statusArray[$action];
+        return $statusArray[$action ?? null];
     }
 
-    // следующие действия
-    public function getNextActions($status, $role, $action)
+    public function getNextActionsByStatus($status)
     {
-        $statusActionsArray = [
-            self::STATUS_NEW => [
-                self::CUSTOMER => [
-                    self::ACTION_CANCEL
-                ],
-                self::EXECUTOR => [
-                    self::ACTION_RESPOND
-                ]
-            ],
-            self::STATUS_INWORK => [
-                self::CUSTOMER => [
-                    self::ACTION_EXECUTE
-                ],
-                self::EXECUTOR => [
-                    self::ACTION_REFUSE
-                ]
-            ]
+        $actionsArray = [
+            self::STATUS_NEW => [self::ACTION_CANCEL, self::ACTION_RESPOND],
+            self::STATUS_IN_PROGRESS => [self::ACTION_EXECUTE, self::ACTION_REFUSE]
         ];
 
-        $allActions = $this->$statusActionsArray[$status];
-        $availableActions = $this->$allActions[$role];
-
-        return $availableActions[$action];
+        return $actionsArray[$status] ?? null;
     }
-
-    // смена статуса
-    public function changeStatus($currentStatus, $currentRole, $currentAction)
-    {
-        $action = $this->getNextActions($currentStatus, $currentRole, $currentAction);
-        $newStatus = $this->getNextStatus($action);
-        $this->status = $newStatus;
-    }
-};
-
-assert($strategy->changeStatus('Отменить') == Task::STATUS_CANCELED, 'Отменить');
+}
