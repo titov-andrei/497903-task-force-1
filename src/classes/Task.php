@@ -54,7 +54,7 @@ class Task
             self::ACTION_REFUSE => self::STATUS_FAILED
         ];
 
-        return $statusArray[$action ?? null];
+        return $statusArray[$action] ?? null;
     }
 
     public function getNextActionsByStatus($status)
