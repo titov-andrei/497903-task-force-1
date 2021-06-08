@@ -1,7 +1,16 @@
 {
-  "autoload": {
+    "name": "andrew/497903-task-force-1",
+    "description": "PHP-Dev",
+    "authors": [
+        {
+            "name": "Andrew E. Titov",
+            "email": "titov_andrei@mail.ru"
+        }
+    ],
+    "require": {},
+    "autoload": {
       "psr-4": {
-          "TaskForce\\Task\\": "src/classes"
+          "Task\\": "src/classes"
       }
   }
 }
