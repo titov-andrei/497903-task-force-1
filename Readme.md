@@ -1,7 +1,7 @@
 # Личный проект «TaskForce»
 
 * Студент: [Андрей Титов](https://up.htmlacademy.ru/yii/1/user/497903).
-* Наставник: [Никита Медведев](https://htmlacademy.ru/profile/id1281715).
+* Наставник: [Денис Ходаковский](https://htmlacademy.ru/profile/id1232355).
 
 ---
 
