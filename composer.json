@@ -10,7 +10,7 @@
     "require": {},
     "autoload": {
       "psr-4": {
-          "TaskForce\\Task\\": "src/classes"
+          "Task\\": "src/classes"
       }
   }
 }
