@@ -17,10 +17,11 @@ CREATE TABLE IF NOT EXISTS `task_force`.`users` (
 );
 
 CREATE TABLE IF NOT EXISTS `task_force`.`communication` (
-    `phone` CHAR(11) NULL,
+    `id` INT UNSIGNED NOT NULL AUTO_INCREMENT,
+    `phone` CHAR(11) NULL, 
     `skype` VARCHAR(255) NULL,
     `telegram` VARCHAR(255) NULL,
-    PRIMARY KEY (`id`),
+    PRIMARY KEY (`id`)
 );
 
 CREATE TABLE IF NOT EXISTS `task_force`.`location` (
@@ -28,13 +29,14 @@ CREATE TABLE IF NOT EXISTS `task_force`.`location` (
     `city_id` INT NULL,
     `latitude` VARCHAR(15) NULL,
     `longitude` VARCHAR(15) NULL,
-    PRIMARY KEY (`id`),
+    PRIMARY KEY (`id`)
 );
 
 CREATE TABLE IF NOT EXISTS `task_force`.`additional_information` (
+    `id` INT UNSIGNED NOT NULL AUTO_INCREMENT,
     `biografy` TEXT NULL,
     `is_public`  TINYINT(1) NULL,
-    PRIMARY KEY (`id`),
+    PRIMARY KEY (`id`)
 );
 
 CREATE TABLE IF NOT EXISTS `task_force`.`avatar` (
@@ -58,7 +60,7 @@ CREATE TABLE IF NOT EXISTS `task_force`.`user_photos` (
     `user_id` INT NOT NULL,
     `file_id` INT NOT NULL,
     PRIMARY KEY (`id`),
-    UNIQUE INDEX `uind_user_id_file_id` (`user_id` ASC, `avatar_id` ASC)
+    UNIQUE INDEX `uind_user_id_file_id` (`user_id` ASC, `file_id` ASC)
 );
 
 CREATE TABLE IF NOT EXISTS `task_force`.`tasks` (
@@ -70,7 +72,7 @@ CREATE TABLE IF NOT EXISTS `task_force`.`tasks` (
     `longitude` VARCHAR(255) NULL,
     `price` INT UNSIGNED NULL,
     `task_term_at` DATETIME NULL,
-    `client_id` INT NOT NULL,
+    `client_id` INT NOT NULL, -- index
     `executor_id` INT NULL,
     `status` INT NOT NULL DEFAULT 1,
     `created_at` TIMESTAMP DEFAULT CURRENT_TIMESTAMP NOT NULL,
@@ -108,7 +110,7 @@ CREATE TABLE IF NOT EXISTS `task_force`.`files` (
 CREATE TABLE IF NOT EXISTS `task_force`.`messages` (
     `id` INT UNSIGNED NOT NULL AUTO_INCREMENT,
     `task_id` INT NOT NULL,
-    `author_id` INT NOT NULL,
+    `author_id` INT NOT NULL, -- index
     `comment` TEXT NOT NULL,
     `created_at` TIMESTAMP DEFAULT CURRENT_TIMESTAMP NOT NULL,
     `updated_at` TIMESTAMP NULL,
@@ -135,10 +137,10 @@ CREATE TABLE IF NOT EXISTS `task_force`.`reviews` (
     `id` INT UNSIGNED NOT NULL AUTO_INCREMENT,
     `comment` TEXT NULL,
     `rating` TINYINT NOT NULL,
-    `author_id` INT NOT NULL,
+    `author_id` INT NOT NULL, -- index
     `created_at` TIMESTAMP DEFAULT CURRENT_TIMESTAMP NOT NULL,
     `updated_at` TIMESTAMP NULL,
-    `user_id` INT NOT NULL,
+    `user_id` INT NOT NULL, -- index
     PRIMARY KEY (`id`),
     UNIQUE INDEX `author_id_UNIQUE` (`author_id` ASC),
     UNIQUE INDEX `user_id_UNIQUE` (`user_id` ASC)
@@ -146,8 +148,8 @@ CREATE TABLE IF NOT EXISTS `task_force`.`reviews` (
 
 CREATE TABLE IF NOT EXISTS `task_force`.`favorite_users` (
     `id` INT UNSIGNED NOT NULL AUTO_INCREMENT,
-    `user_id` INT NOT NULL,
-    `favoririte_user_id` INT NOT NULL,
+    `user_id` INT NOT NULL, -- index
+    `favoririte_user_id` INT NOT NULL, -- index
     `created_at` TIMESTAMP DEFAULT CURRENT_TIMESTAMP NOT NULL,
     `updated_at` TIMESTAMP NULL,
     PRIMARY KEY (`id`),
