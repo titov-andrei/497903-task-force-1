@@ -2,7 +2,7 @@
 
 require_once '../vendor/autoload.php';
 
-use Task;
+use TaskForce\Task;
 
 $task = new Task(1, 2);
 
