@@ -13,11 +13,12 @@ CREATE TABLE IF NOT EXISTS `task_force`.`users` (
     `created_at` TIMESTAMP DEFAULT CURRENT_TIMESTAMP NOT NULL,
     `updated_at` TIMESTAMP NULL,
     PRIMARY KEY (`id`),
-    UNIQUE INDEX `uind_email_password` (`email` ASC, `password` ASC)
+    UNIQUE INDEX `idx_users_email_password` (`email` ASC, `password` ASC)
 );
 
 CREATE TABLE IF NOT EXISTS `task_force`.`communication` (
     `id` INT UNSIGNED NOT NULL AUTO_INCREMENT,
+    `user_id` INT NOT NULL,
     `phone` CHAR(11) NULL, 
     `skype` VARCHAR(255) NULL,
     `telegram` VARCHAR(255) NULL,
@@ -26,14 +27,17 @@ CREATE TABLE IF NOT EXISTS `task_force`.`communication` (
 
 CREATE TABLE IF NOT EXISTS `task_force`.`location` (
     `id` INT UNSIGNED NOT NULL AUTO_INCREMENT,
+    `user_id` INT NOT NULL,
     `city_id` INT NULL,
     `latitude` VARCHAR(15) NULL,
     `longitude` VARCHAR(15) NULL,
-    PRIMARY KEY (`id`)
+    PRIMARY KEY (`id`),
+    INDEX `idx_location_city_id` (`city_id` ASC)
 );
 
 CREATE TABLE IF NOT EXISTS `task_force`.`additional_information` (
     `id` INT UNSIGNED NOT NULL AUTO_INCREMENT,
+    `user_id` INT NOT NULL,
     `biografy` TEXT NULL,
     `is_public`  TINYINT(1) NULL,
     PRIMARY KEY (`id`)
@@ -44,7 +48,7 @@ CREATE TABLE IF NOT EXISTS `task_force`.`avatar` (
     `user_id` INT NOT NULL,
     `file_id` INT NOT NULL,
     PRIMARY KEY (`id`),
-    UNIQUE INDEX `uind_user_id_file_id` (`user_id` ASC, `file_id` ASC)
+    UNIQUE INDEX `idx_avatar_user_id_file_id` (`user_id` ASC, `file_id` ASC)
 );
 
 CREATE TABLE IF NOT EXISTS `task_force`.`user_categories` (
@@ -52,7 +56,7 @@ CREATE TABLE IF NOT EXISTS `task_force`.`user_categories` (
     `user_id` INT NOT NULL,
     `category_id` INT NOT NULL,
     PRIMARY KEY (`id`),
-    UNIQUE INDEX `uind_user_id_category_id` (`user_id` ASC, `category_id` ASC)
+    UNIQUE INDEX `idx_user_categories_user_id_category_id` (`user_id` ASC, `category_id` ASC)
 );
 
 CREATE TABLE IF NOT EXISTS `task_force`.`user_photos` (
@@ -60,7 +64,7 @@ CREATE TABLE IF NOT EXISTS `task_force`.`user_photos` (
     `user_id` INT NOT NULL,
     `file_id` INT NOT NULL,
     PRIMARY KEY (`id`),
-    UNIQUE INDEX `uind_user_id_file_id` (`user_id` ASC, `file_id` ASC)
+    UNIQUE INDEX `idx_user_photos_user_id_file_id` (`user_id` ASC, `file_id` ASC)
 );
 
 CREATE TABLE IF NOT EXISTS `task_force`.`tasks` (
@@ -72,17 +76,17 @@ CREATE TABLE IF NOT EXISTS `task_force`.`tasks` (
     `longitude` VARCHAR(255) NULL,
     `price` INT UNSIGNED NULL,
     `task_term_at` DATETIME NULL,
-    `client_id` INT NOT NULL, -- index
+    `client_id` INT NOT NULL,
     `executor_id` INT NULL,
     `status` INT NOT NULL DEFAULT 1,
     `created_at` TIMESTAMP DEFAULT CURRENT_TIMESTAMP NOT NULL,
     `updated_at` TIMESTAMP NULL,
     `city_id` INT NOT NULL,
     PRIMARY KEY (`id`),
-    UNIQUE INDEX `title_UNIQUE` (`title` ASC),
-    UNIQUE INDEX `category_id_UNIQUE` (`category_id` ASC),
-    UNIQUE INDEX `client_id_UNIQUE` (`client_id` ASC),
-    UNIQUE INDEX `status_UNIQUE` (`status` ASC)
+    INDEX `idx_tasks_title` (`title` ASC),
+    INDEX `idx_tasks_category_id` (`category_id` ASC),
+    INDEX `idx_tasks_client_id` (`client_id` ASC),
+    INDEX `idx_tasks_category_id_status` (`category_id` ASC, `status` ASC)
 );
 
 CREATE TABLE IF NOT EXISTS `task_force`.`responses` (
@@ -93,7 +97,9 @@ CREATE TABLE IF NOT EXISTS `task_force`.`responses` (
     `comment` TEXT NULL,
     `created_at` TIMESTAMP DEFAULT CURRENT_TIMESTAMP NOT NULL,
     `updated_at` TIMESTAMP NULL,
-    PRIMARY KEY (`id`)
+    PRIMARY KEY (`id`),
+    INDEX `idx_responses_task_id` (`task_id` ASC),
+    INDEX `idx_responses_user_id` (`user_id` ASC)
 );
 
 CREATE TABLE IF NOT EXISTS `task_force`.`files` (
@@ -104,58 +110,60 @@ CREATE TABLE IF NOT EXISTS `task_force`.`files` (
     `user_id` INT NOT NULL,
     `created_at` TIMESTAMP DEFAULT CURRENT_TIMESTAMP NOT NULL,
     `updated_at` TIMESTAMP NULL,
-    PRIMARY KEY (`id`)
+    PRIMARY KEY (`id`),
+    INDEX `idx_files_task_id` (`task_id` ASC),
+    INDEX `idx_files_user_id` (`user_id` ASC)
 );
 
 CREATE TABLE IF NOT EXISTS `task_force`.`messages` (
     `id` INT UNSIGNED NOT NULL AUTO_INCREMENT,
     `task_id` INT NOT NULL,
-    `author_id` INT NOT NULL, -- index
+    `author_id` INT NOT NULL,
     `comment` TEXT NOT NULL,
     `created_at` TIMESTAMP DEFAULT CURRENT_TIMESTAMP NOT NULL,
     `updated_at` TIMESTAMP NULL,
     PRIMARY KEY (`id`),
-    UNIQUE INDEX `task_id_UNIQUE` (`task_id` ASC),
-    UNIQUE INDEX `author_id_UNIQUE` (`author_id` ASC)
+    INDEX `idx_messages_task_id` (`task_id` ASC),
+    INDEX `idx_messages_author_id` (`author_id` ASC)
 );
 
 CREATE TABLE IF NOT EXISTS `task_force`.`cities` (
     `id` INT UNSIGNED NOT NULL AUTO_INCREMENT,
     `city` VARCHAR(255) NOT NULL,
     PRIMARY KEY (`id`),
-    UNIQUE INDEX `city_UNIQUE` (`city` ASC)
+    UNIQUE INDEX `idx_cities_city` (`city` ASC)
 );
 
 CREATE TABLE IF NOT EXISTS `task_force`.`categories` (
     `id` INT UNSIGNED NOT NULL AUTO_INCREMENT,
     `category` VARCHAR(45) NOT NULL,
     PRIMARY KEY (`id`),
-    UNIQUE INDEX `category_UNIQUE` (`category` ASC)
+    UNIQUE INDEX `idx_categories_category` (`category` ASC)
 );
 
 CREATE TABLE IF NOT EXISTS `task_force`.`reviews` (
     `id` INT UNSIGNED NOT NULL AUTO_INCREMENT,
     `comment` TEXT NULL,
     `rating` TINYINT NOT NULL,
-    `author_id` INT NOT NULL, -- index
+    `author_id` INT NOT NULL,
     `created_at` TIMESTAMP DEFAULT CURRENT_TIMESTAMP NOT NULL,
     `updated_at` TIMESTAMP NULL,
-    `user_id` INT NOT NULL, -- index
+    `user_id` INT NOT NULL,
     PRIMARY KEY (`id`),
-    UNIQUE INDEX `author_id_UNIQUE` (`author_id` ASC),
-    UNIQUE INDEX `user_id_UNIQUE` (`user_id` ASC)
+    INDEX `idx_reviews_author_id` (`author_id` ASC),
+    INDEX `idx_reviews_user_id` (`user_id` ASC)
 );
 
 CREATE TABLE IF NOT EXISTS `task_force`.`favorite_users` (
     `id` INT UNSIGNED NOT NULL AUTO_INCREMENT,
-    `user_id` INT NOT NULL, -- index
-    `favoririte_user_id` INT NOT NULL, -- index
+    `user_id` INT NOT NULL,
+    `favoririte_user_id` INT NOT NULL,
     `created_at` TIMESTAMP DEFAULT CURRENT_TIMESTAMP NOT NULL,
     `updated_at` TIMESTAMP NULL,
     PRIMARY KEY (`id`),
-    UNIQUE INDEX `uind_favoririte_user_id_user_id` (`favoririte_user_id` ASC, `user_id` ASC),
-    UNIQUE INDEX `user_id_UNIQUE` (`user_id` ASC),
-    UNIQUE INDEX `favoririte_user_id_UNIQUE` (`favoririte_user_id` ASC)
+    UNIQUE INDEX `idx_favorite_users_favoririte_user_id_user_id` (`favoririte_user_id` ASC, `user_id` ASC),
+    INDEX `idx_favorite_users_user_id` (`user_id` ASC),
+    INDEX `idx_favorite_users_favoririte_user_id` (`favoririte_user_id` ASC)
 );
 
 CREATE TABLE IF NOT EXISTS `task_force`.`user_settings` (
@@ -168,5 +176,6 @@ CREATE TABLE IF NOT EXISTS `task_force`.`user_settings` (
     `task_completion` TINYINT(1) NOT NULL DEFAULT 1,
     `created_at` TIMESTAMP DEFAULT CURRENT_TIMESTAMP NOT NULL,
     `updated_at` TIMESTAMP NULL,
-    PRIMARY KEY (`id`)
+    PRIMARY KEY (`id`),
+    INDEX `idx_user_settings_user_id` (`user_id` ASC)
 );
