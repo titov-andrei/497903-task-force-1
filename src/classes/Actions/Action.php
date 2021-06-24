@@ -4,20 +4,9 @@ namespace Task\Actions;
 
 abstract class Action
 {
-    public $executorId;
-    public $customerId;
-    public $currentId;
+    abstract public function getTitle(): string;
 
-    public function __construct(int $executorId, int $customerId, int $currentId)
-    {
-        $this->executorId = $executorId;
-        $this->customerId = $customerId;
-        $this->currentId = $currentId;
-    }
+    abstract public function getName(): string;
 
-    abstract protected function getTitle();
-
-    abstract protected function getName();
-
-    abstract protected function getRights(): bool;
+    abstract public function getRights(int $executorId, int $customerId, int $currentId): bool;
 }
