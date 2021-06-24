@@ -14,8 +14,8 @@ class ActionRespond extends Action
         return 'respond';
     }
 
-    public function getRights(): bool
+    public function getRights(int $executorId, int $customerId, int $currentId): bool
     {
-        return $this->currentId === $this->executorId;
+        return true;
     }
 }
