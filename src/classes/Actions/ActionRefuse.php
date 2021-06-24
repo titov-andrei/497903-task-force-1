@@ -14,7 +14,7 @@ class ActionRefuse extends Action
         return 'refuse';
     }
 
-    public function getRights(): bool
+    public function getRights(int $executorId, int $customerId, int $currentId): bool
     {
         return $this->currentId === $this->executorId;
     }
