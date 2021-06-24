@@ -4,8 +4,9 @@ namespace Task;
 
 use Task\Actions\ActionCancel;
 use Task\Actions\ActionRespond;
-use Task\Actions\ActionExecute;
+use Task\Actions\ActionComplete;
 use Task\Actions\ActionRefuse;
+use Task\Actions\Action;
 
 class Task
 {
@@ -18,7 +19,7 @@ class Task
     const ACTION_CANCEL = 'cancel';
     const ACTION_RESPOND = 'respond';
     const ACTION_REFUSE = 'refuse';
-    const ACTION_EXECUTE = 'execute';
+    const ACTION_COMPLETE = 'complete';
 
     private $status;
     private $executorId;
@@ -44,61 +45,31 @@ class Task
         ];
     }
 
-    public function getActionMap()
-    {
-        return [
-            self::ACTION_CANCEL => 'Отменить',
-            self::ACTION_RESPOND => 'Откликнуться',
-            self::ACTION_REFUSE => 'Отказаться',
-            self::ACTION_EXECUTE => 'Выполнить',
-        ];
-    }
-
     public function getNextStatusByAction($action)
     {
         $statusArray = [
             self::ACTION_CANCEL => self::STATUS_CANCELED,
             self::ACTION_RESPOND => self::STATUS_IN_PROGRESS,
             self::ACTION_REFUSE => self::STATUS_FAILED,
-            self::ACTION_EXECUTE => self::STATUS_DONE,
+            self::ACTION_COMPLETE => self::STATUS_DONE,
         ];
 
         return $statusArray[$action] ?? null;
     }
 
-    public function getNextActionsByStatus($status)
+    public function getNextActionsByStatus($status): array
     {
-        switch ($status) {
-            case self::STATUS_NEW:
-                $actionCancel = new ActionCancel($this->executorId, $this->customerId, $this->currentId);
-                if ($actionCancel->getRights()) {
-                    return ($actionCancel);
-                } else {
-                    unset($actionCancel);
-                }
+        $actionsArray = [
+            self::STATUS_NEW => [new ActionCancel(), new ActionRespond()],
+            self::STATUS_IN_PROGRESS => [new ActionComplete(), new ActionRefuse()]
+        ];
 
-                $actionRespond = new ActionRespond($this->executorId, $this->customerId, $this->currentId);
-                if ($actionRespond->getRights()) {
-                    return ($actionRespond);
-                } else {
-                    unset($actionRespond);
-                }
-
-            case self::STATUS_IN_PROGRESS:
-                $actionRefuse = new ActionRefuse($this->executorId, $this->customerId, $this->currentId);
-                if ($actionRefuse->getRights()) {
-                    return ($actionRefuse);
-                } else {
-                    unset($actionRefuse);
-                }
-
-                $actionExecute = new ActionExecute($this->executorId, $this->customerId, $this->currentId);
-                if ($actionExecute->getRights()) {
-                    return ($actionExecute);
-                } else {
-                    unset($actionExecute);
-                }
+        if (!isset($actionsArray[$status])) {
+            return [];
         }
-        return NULL;
+
+        return array_filter($actionsArray[$status], function (Action $action) {
+            return $action->getRights($this->executorId, $this->customerId, $this->currentId);
+        });
     }
 }
