@@ -14,7 +14,7 @@ class ActionCancel extends Action
         return 'cancel';
     }
 
-    public function getRights(): bool
+    public function getRights(int $executorId, int $customerId, int $currentId): bool
     {
         return $this->currentId === $this->customerId;
     }
