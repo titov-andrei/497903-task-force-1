@@ -1,16 +1,17 @@
 {
-    "name": "andrew/497903-task-force-1",
-    "description": "PHP-Dev",
-    "authors": [
-        {
-            "name": "Andrew E. Titov",
-            "email": "titov_andrei@mail.ru"
-        }
-    ],
-    "require": {},
-    "autoload": {
-      "psr-4": {
-          "Task\\": "src/classes"
-      }
+  "name": "andrew/497903-task-force-1",
+  "description": "PHP-Dev",
+  "authors": [
+    {
+      "name": "Andrew E. Titov",
+      "email": "titov_andrei@mail.ru"
+    }
+  ],
+  "require": {},
+  "autoload": {
+    "psr-4": {
+      "Task\\": "src/classes",
+      "Exceptions\\": "src/classes/Exceptions"
+    }
   }
 }
