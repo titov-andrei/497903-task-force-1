@@ -10,8 +10,8 @@
   "require": {},
   "autoload": {
     "psr-4": {
-      "Task\\": "src/classes",
-      "Exceptions\\": "src/classes/Exceptions"
+      "TaskForce\\": "src",
+      "Exceptions\\": "src/Exceptions"
     }
   }
 }
