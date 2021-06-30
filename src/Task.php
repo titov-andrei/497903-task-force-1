@@ -1,17 +1,21 @@
 <?php
 
-namespace Task;
+declare(strict_types=1);
 
-use Task\Actions\ActionCancel;
-use Task\Actions\ActionRespond;
-use Task\Actions\ActionComplete;
-use Task\Actions\ActionRefuse;
-use Task\Actions\Action;
+namespace TaskForce;
+
+use Exceptions\TaskForceException;
+
+use TaskForce\Actions\Action;
+use TaskForce\Actions\ActionCancel;
+use TaskForce\Actions\ActionRespond;
+use TaskForce\Actions\ActionComplete;
+use TaskForce\Actions\ActionRefuse;
 
 class Task
 {
     const STATUS_NEW = 'new';
-    const STATUS_IN_PROGRESS= 'in_progress';
+    const STATUS_IN_PROGRESS = 'in_progress';
     const STATUS_DONE = 'done';
     const STATUS_CANCELED = 'canceled';
     const STATUS_FAILED = 'failed';
@@ -26,49 +30,47 @@ class Task
     private $customerId;
     private $currentId;
 
-    public function __construct(int $executor, ?int $customer = null, int $current, string $status)
+    public function __construct(string $status, int $current, int $customer, ?int $executor = null )
     {
-        $this->status = $status;
-        $this->executorId = $executor;
-        $this->customerId = $customer;
-        $this->currentId = $current;
-    }
-
-    public function getStatusMap()
-    {
-        return [
+        $statusArray = [
             self::STATUS_NEW => 'Новое',
             self::STATUS_CANCELED => 'Отменено',
             self::STATUS_IN_PROGRESS => 'В работе',
             self::STATUS_DONE => 'Выполнено',
             self::STATUS_FAILED => 'Провалено',
         ];
-    }
 
-    public function getNextStatusByAction($action)
+        if (!isset($statusArray[$status])) {
+            throw new TaskForceException("Status не может иметь такое значение");
+        }
+
+        $this->status = $status;
+        $this->currentId = $current;
+        $this->customerId = $customer;
+        $this->executorId = $executor;
+    }
+    
+    public function getNextStatusByAction(string $action): ?array
     {
-        $statusArray = [
+        $statusArrayByAction = [
             self::ACTION_CANCEL => self::STATUS_CANCELED,
             self::ACTION_RESPOND => self::STATUS_IN_PROGRESS,
             self::ACTION_REFUSE => self::STATUS_FAILED,
             self::ACTION_COMPLETE => self::STATUS_DONE,
         ];
 
-        return $statusArray[$action] ?? null;
+        return $statusArrayByAction[$action] ?? null;
     }
 
     public function getNextActionsByStatus($status): array
     {
-        $actionsArray = [
+        $status = $this->status;
+        $actionsArrayByStatus = [
             self::STATUS_NEW => [new ActionCancel(), new ActionRespond()],
             self::STATUS_IN_PROGRESS => [new ActionComplete(), new ActionRefuse()]
         ];
 
-        if (!isset($actionsArray[$status])) {
-            return [];
-        }
-
-        return array_filter($actionsArray[$status], function (Action $action) {
+        return array_filter($actionsArrayByStatus[$status], function (Action $action) {
             return $action->getRights($this->executorId, $this->customerId, $this->currentId);
         });
     }

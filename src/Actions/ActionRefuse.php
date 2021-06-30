@@ -1,21 +1,21 @@
 <?php
 
-namespace Task\Actions;
+namespace TaskForce\Actions;
 
-class ActionCancel extends Action
+class ActionRefuse extends Action
 {
     public function getTitle(): string
     {
-        return 'Отменить';
+        return 'Отказаться';
     }
 
     public function getName(): string
     {
-        return 'cancel';
+        return 'refuse';
     }
 
     public function getRights(int $executorId, int $customerId, int $currentId): bool
     {
-        return $this->currentId === $this->customerId;
+        return $this->currentId === $this->executorId;
     }
 }

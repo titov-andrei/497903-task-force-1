@@ -1,21 +1,21 @@
 <?php
 
-namespace Task\Actions;
+namespace TaskForce\Actions;
 
-class ActionComplete extends Action
+class ActionRespond extends Action
 {
     public function getTitle(): string
     {
-        return 'Выполнить';
+        return 'Откликнуться';
     }
 
     public function getName(): string
     {
-        return 'complete';
+        return 'respond';
     }
 
     public function getRights(int $executorId, int $customerId, int $currentId): bool
     {
-        return $this->currentId === $this->customerId;
+        return true;
     }
 }
