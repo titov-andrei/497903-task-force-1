@@ -49,7 +49,7 @@ class Task
         $this->customerId = $customer;
         $this->executorId = $executor;
     }
-    
+
     public function getNextStatusByAction(string $action): ?array
     {
         $statusArrayByAction = [
