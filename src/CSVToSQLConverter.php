@@ -14,7 +14,6 @@ class CSVToSQLConverter
 
         if (!file_exists($directory)  && !mkdir($directory)) {
             throw new TaskForceException('Не удалось создать дуректорию');
-            mkdir($directory);
         }
 
         try {
